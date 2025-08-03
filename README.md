@@ -19,7 +19,11 @@
 In order to generate graph datasets, you can run the following command:
 ```
 python3 -m graph_generation.graph_dataset_generator
-``` 
+```
+
+The script automatically selects CUDA or Apple's Metal Performance Shaders (MPS)
+backend when available, allowing faster execution on machines such as Apple
+Silicon MacBooks.
 
 The details can be found in the [graph_dataset_generator.py](./graph_generation/graph_dataset_generator.py)
 
