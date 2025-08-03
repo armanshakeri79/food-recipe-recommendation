@@ -7,7 +7,6 @@ import pandas as pd
 import numpy as np
 import torch
 from dotenv import load_dotenv; load_dotenv()
-from kaggle.api.kaggle_api_extended import KaggleApi
 from sentence_transformers import SentenceTransformer
 from torch_geometric.data import HeteroData
 from torch_geometric.transforms import ToUndirected, RandomLinkSplit
@@ -19,7 +18,10 @@ class IdentityEncoder:
         self.dtype = dtype
 
     def __call__(self, values: pd.Series) -> torch.Tensor:
-        return torch.from_numpy(values.to_numpy()).view(-1, 1).to(self.dtype)
+        tensor = torch.from_numpy(values.to_numpy()).view(-1, 1)
+        if self.dtype is not None:
+            tensor = tensor.to(self.dtype)
+        return tensor
 
 
 class ListEncoder:
@@ -28,7 +30,9 @@ class ListEncoder:
         self.dtype = dtype
 
     def __call__(self, values: pd.Series) -> torch.Tensor:
-        return  torch.tensor(values.tolist(), dtype=self.dtype)    
+        if self.dtype is not None:
+            return torch.tensor(values.tolist(), dtype=self.dtype)
+        return torch.tensor(values.tolist())
 
 
 class SequenceEncoder:
@@ -67,9 +71,9 @@ class SequenceListEncoder:
 
 def download_raw_data(dataset_name: str, destination_path: str) -> None:
     """Download raw dataset files from Kaggle."""
+    from kaggle.api.kaggle_api_extended import KaggleApi
     api = KaggleApi()
     # api.authenticate()
-
     api.dataset_download_files(dataset_name, path=destination_path, unzip=True)
 
 
