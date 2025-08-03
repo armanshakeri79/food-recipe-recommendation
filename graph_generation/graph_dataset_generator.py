@@ -154,7 +154,12 @@ if __name__ == '__main__':
     base_data_path = 'data'
     raw_dataset_name = 'shuyangli94/food-com-recipes-and-user-interactions'
     sequence_embedder_id = 'sentence-transformers/all-mpnet-base-v2'
-    device = 'cuda' if torch.cuda.is_available() else None
+    if torch.cuda.is_available():
+        device = 'cuda'
+    elif torch.backends.mps.is_available():
+        device = 'mps'
+    else:
+        device = None
     batch_size = 64
     supervision_train_ratio = 0.2
     validation_ratio = 0.05
